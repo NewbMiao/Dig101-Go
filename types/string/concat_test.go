@@ -7,104 +7,134 @@ import (
 	"testing"
 )
 
-var shortStr = string(make([]byte, 16))
-var longStr = string(make([]byte, 1024))
+var shortStr = "my_string" + string(make([]byte, 16))
+var longStr = "my_string" + string(make([]byte, 256))
 
 // go test . -bench  BenchmarkConcat -benchtime=3s -benchmem
 
-// The standard Go compiler makes optimizations for string concatenations by using the + operator.
-// So generally, using + operator to concatenate strings is convenient and efficient
-// if the number of the concatenated strings is known at compile time.
-// otherwise byte.Buffer will be more efficient
-func BenchmarkConcatLess(b *testing.B) {
-	concatIter(b, shortStr, 1)
-	concatIter(b, longStr, 1)
+func BenchmarkConcatShort10(b *testing.B) {
+	concatIter(b, shortStr, 10)
 }
 
-func BenchmarkConcatMore(b *testing.B) {
-	concatIter(b, shortStr, 100)
-	concatIter(b, longStr, 100)
+func BenchmarkConcatShort1000(b *testing.B) {
+	concatIter(b, shortStr, 1000)
+}
+
+func BenchmarkConcatLong10(b *testing.B) {
+	concatIter(b, longStr, 10)
+}
+
+func BenchmarkConcatLong1000(b *testing.B) {
+	// concatIter(b, longStr, 1000)
+	concatIterWithGrowInit(b, longStr, 1000)
+}
+
+// grow init avoid realloc cost
+func concatIterWithGrowInit(b *testing.B, v string, iter int) {
+	b.Run("BufferInit", func(b *testing.B) {
+		for n := 0; n < b.N; n++ {
+			var bf bytes.Buffer
+			bf.Grow(iter * len(v))
+			for i := 0; i < iter; i++ {
+				bf.WriteString(v)
+			}
+			_ = bf.String()
+		}
+
+	})
+
+	b.Run("BuilderInit", func(b *testing.B) {
+		for n := 0; n < b.N; n++ {
+			var bf strings.Builder
+			bf.Grow(iter * len(v))
+			for i := 0; i < iter; i++ {
+				bf.WriteString(v)
+			}
+			_ = bf.String()
+		}
+
+	})
 }
 
 func concatIter(b *testing.B, v string, iter int) {
-	var k string
-	if len(v) > 32 {
-		k += "long"
-	} else {
-		k += "short"
-	}
-
 	// implements a Go string concatenation x+y+z+...
 	// is small than 32 would use [32]byte to concat
 	// if not alloc memory to concat
-	b.Run(k+"Plus", func(b *testing.B) {
+	b.Run("Plus", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			var s string
 			for i := 0; i < iter; i++ {
-				s += "my_string" + v
-				b.SetBytes(int64(len(v)))
+				s += v
 			}
-
+			_ = s
 		}
+
 	})
 
 	// initial a []byte buffer which lenth is 64, and grow double when need,
 	// otherwise just reslice itself
-	b.Run(k+"Buffer", func(b *testing.B) {
+	b.Run("Buffer", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			var bf bytes.Buffer
 			for i := 0; i < iter; i++ {
-				bf.WriteString("my_string")
 				bf.WriteString(v)
-				b.SetBytes(int64(len(v)))
 			}
+			_ = bf.String()
 		}
+
 	})
 
 	// inside use strings.Builder
-	b.Run(k+"Join", func(b *testing.B) {
+	b.Run("Join", func(b *testing.B) {
+
+		strsArgs := make([]string, iter)
+		for i := 0; i < iter; i++ {
+			strsArgs[i] = v
+		}
+		b.ResetTimer()
+
 		for n := 0; n < b.N; n++ {
-			var s string
-			for i := 0; i < iter; i++ {
-				s += strings.Join([]string{"my_string", v}, "")
-				b.SetBytes(int64(len(v)))
-			}
+			_ = strings.Join(strsArgs, "")
 		}
 	})
 
 	// minimizes memory copying, contains copyCheck
-	b.Run(k+"Builder", func(b *testing.B) {
+	b.Run("Builder", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			var bf strings.Builder
 			for i := 0; i < iter; i++ {
-				bf.WriteString("my_string")
 				bf.WriteString(v)
-				b.SetBytes(int64(len(v)))
 			}
+			_ = bf.String()
 		}
+
 	})
 
 	// use simple []byte
-	b.Run(k+"Sprint", func(b *testing.B) {
-		for n := 0; n < b.N; n++ {
-			var s string
-			for i := 0; i < iter; i++ {
+	b.Run("Sprint", func(b *testing.B) {
+		sprintArgs := make([]interface{}, iter)
+		for i := 0; i < iter; i++ {
+			sprintArgs[i] = v
+		}
 
-				s += fmt.Sprint("my_string", v)
-				b.SetBytes(int64(len(v)))
-			}
+		b.ResetTimer()
+		for n := 0; n < b.N; n++ {
+			_ = fmt.Sprint(sprintArgs...)
 		}
 	})
 
 	// use simple []byte and need do formatLoop
-	b.Run(k+"Sprintf", func(b *testing.B) {
-		for n := 0; n < b.N; n++ {
-			var s string
-			for i := 0; i < iter; i++ {
+	b.Run("Sprintf", func(b *testing.B) {
+		sprintArgs := make([]interface{}, iter)
+		for i := 0; i < iter; i++ {
+			sprintArgs[i] = v
+		}
+		sprintFmt := strings.Repeat("%s", iter)
 
-				s += fmt.Sprintf("my_string%s", v)
-				b.SetBytes(int64(len(v)))
-			}
+		b.ResetTimer()
+
+		for n := 0; n < b.N; n++ {
+			_ = fmt.Sprintf(sprintFmt, sprintArgs...)
 		}
 	})
 }
