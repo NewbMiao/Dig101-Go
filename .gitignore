@@ -2,3 +2,6 @@
 *.test
 *.out
 .vscode
+*.o
+bin/
+test.go

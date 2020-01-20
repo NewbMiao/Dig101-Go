@@ -32,9 +32,11 @@ func BenchmarkConcatLong1000(b *testing.B) {
 // grow init avoid realloc cost
 func concatIterWithGrowInit(b *testing.B, v string, iter int) {
 	b.Run("BufferInit", func(b *testing.B) {
+		var bf bytes.Buffer
+		bf.Grow(iter * len(v))
+		b.ResetTimer()
 		for n := 0; n < b.N; n++ {
-			var bf bytes.Buffer
-			bf.Grow(iter * len(v))
+			bf.Reset()
 			for i := 0; i < iter; i++ {
 				bf.WriteString(v)
 			}
@@ -74,8 +76,9 @@ func concatIter(b *testing.B, v string, iter int) {
 	// initial a []byte buffer which lenth is 64, and grow double when need,
 	// otherwise just reslice itself
 	b.Run("Buffer", func(b *testing.B) {
+		var bf bytes.Buffer
 		for n := 0; n < b.N; n++ {
-			var bf bytes.Buffer
+			bf.Reset()
 			for i := 0; i < iter; i++ {
 				bf.WriteString(v)
 			}
@@ -98,10 +101,11 @@ func concatIter(b *testing.B, v string, iter int) {
 		}
 	})
 
-	// minimizes memory copying, contains copyCheck
+	// minimizes memory copying, contains copyCheck, and when want string output will more efficient than buffer
 	b.Run("Builder", func(b *testing.B) {
+		var bf strings.Builder
 		for n := 0; n < b.N; n++ {
-			var bf strings.Builder
+			bf.Reset()
 			for i := 0; i < iter; i++ {
 				bf.WriteString(v)
 			}
