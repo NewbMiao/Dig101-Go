@@ -1,10 +1,16 @@
 package main
 
+import "math"
+
 func main() {
 
 }
 
-func unhashableType(){
+// slice is incomparable and cant use for hash
+// incomparable type:
+// func, map, slice
+// any array or struct contains func/map/slice
+func unhashableType() {
 	var m = map[interface{}]int{}
 	var i interface{} = []int{}
 	//panic: runtime error: hash of unhashable type []int
@@ -13,7 +19,8 @@ func unhashableType(){
 	delete(m, i)
 }
 
-func unaddressable(){
+// can not take address of map elem
+func unaddressable() {
 	m0 := map[int]int{}
 	// ❎ cannot take the address of m0[0]
 	_ = &m0[0]
@@ -35,4 +42,13 @@ func unaddressable(){
 	// ❎ cannot take the address of ms[0]
 	_ = &ms[0]
 
+}
+
+// NaN: key != key, use NaN as key make no sense
+func unreachable() {
+	n1, n2 := math.NaN(), math.NaN()
+	m := map[float64]int{}
+	m[n1], m[n2] = 1, 2
+	println(n1 == n2, m[n1], m[n2])
+	// output: false 0 0
 }
