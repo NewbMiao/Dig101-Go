@@ -1,22 +1,11 @@
 # Dig101-Go
 
-This is a series of dig in golang, try to make it simpler.
+记录下golang的代码分析之路（代码及图表）
 
-## catalog
+## 文章目录
 
-- [for-range排坑指南](https://mp.weixin.qq.com/s/klJBAi5LvdJOGvma2Ir0OA)
+- [博客版](http://blog.newbmiao.com/categories/go/dig101/) (更新及时)
 
-    [code](for-range/for-range.go)
-- [灵活的slice](https://mp.weixin.qq.com/s/r3ZJVdq0dTkA1xHinIVLUA)
-
-    [code](types/slice)
-
-- [string那些事](https://mp.weixin.qq.com/s/k8KmPsmLoDMysYOEFRe2MQ)
-
-    [code](types/string)
-
-- [读懂map的底层设计](https://mp.weixin.qq.com/s/5-WlzKLRGksEfqhDT3G3rQ)
-
-    [code](types/map)
+- [微信版](http://mp.weixin.qq.com/mp/homepage?__biz=MzUxNzA2NzEzNw==&hid=2&sn=6935f710b54242918329526d76c55df0)（代码格式好些）
 
 Digging...
