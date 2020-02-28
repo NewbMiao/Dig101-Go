@@ -4,8 +4,8 @@
 
 ## 文章目录
 
-- [博客版](http://blog.newbmiao.com/categories/go/dig101/) (更新及时)
+- [博客版](http://blog.newbmiao.com/categories/go/dig101/)
 
-- [微信版](http://mp.weixin.qq.com/mp/homepage?__biz=MzUxNzA2NzEzNw==&hid=2&sn=6935f710b54242918329526d76c55df0)（代码格式好些）
+- [微信版](https://mp.weixin.qq.com/mp/homepage?__biz=MzUxNzA2NzEzNw==&hid=3&sn=6ded611e164ec49132752fdbdaac552f)
 
 Digging...
