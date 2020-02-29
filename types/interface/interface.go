@@ -27,10 +27,12 @@ func conversion() {
 	var i Binary = 1
 	b = i //convT64
 
-	println(b.String())
+	_ = b.String()
 }
 
-func noConversion() {
+// GOSSAFUNC=main go1.14 build types/interface/interface.go
+// to check virtual version of ssa: types/interface/ssa.html
+func devirt() {
 	var b Stringer = Binary(1)
 	_ = b.String() //static call Binary.String
 }
@@ -52,5 +54,6 @@ func typeAssert() {
 func main() {
 	efaceAndiface()
 	conversion()
+	devirt()
 	typeAssert()
 }
