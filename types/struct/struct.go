@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"sync/atomic"
 	"unsafe"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -190,7 +188,7 @@ func shadowField() {
 	// 所有 json tag 会被提升用来匹配，遵循同名覆盖规则
 	// 所以 tag "a" 会解码到 a.A
 	json.Unmarshal(jsonBytes, &a)
-	spew.Printf("unmarshal json with embedded field: %+v\n", a)
+	fmt.Printf("unmarshal json with embedded field: %+v\n", a)
 	// {A:[1 2] Embedded:{A: B:3}}
 
 	// 若Embedded.A json tag 为a1， 则输出为

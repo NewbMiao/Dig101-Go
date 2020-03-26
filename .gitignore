@@ -6,5 +6,7 @@
 bin/
 test.go
 .DS_Store
+.gdb_history
+test
 __debug_bin
 ssa.html
