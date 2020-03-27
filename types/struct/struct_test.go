@@ -8,35 +8,49 @@ import (
 /*
 go get golang.org/x/perf/cmd/benchstat
 
-go test github.com/NewbMiao/Dig101-Go/types/struct -bench .  -count=10 -cpu 1 > old.txt
+GOARCH=386 go test github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 10 > old.txt
 
-benchstat old.txt                                                                      
-name       time/op
-Aligned    0.43ns ±32%
-UnAligned  0.44ns ±34%
+// 386_amd64
+benchstat old.txt
+name          time/op
+UnAligned-12  0.82ns ± 6%
+Aligned-12    0.52ns ± 1%
 */
-type UnAligned struct {
-	b [15]byte
-}
-type Aligned struct {
-	b [16]byte
+var ptrSize uintptr
+
+func init() {
+	ptrSize = unsafe.Sizeof(uintptr(1))
 }
 
-func BenchmarkAligned(b *testing.B) {
-	x := Aligned{}
-	// fmt.Println(uintptr(unsafe.Pointer(&x)) % 8) // == 0
-
-	tmp := (*int64)(unsafe.Pointer(&x))
+func BenchmarkUnAligned(b *testing.B) {
+	type UnAligned struct {
+		b [25]byte
+	}
+	x := UnAligned{}
+	address := uintptr(unsafe.Pointer(&x.b))
+	if address%ptrSize == 0 {
+		b.Error("Not unaligned address")
+	}
+	tmp := (*int64)(unsafe.Pointer(&x.b))
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		*tmp = int64(i)
 	}
 }
-func BenchmarkUnAligned(b *testing.B) {
-	x := UnAligned{}
-	// fmt.Println(uintptr(unsafe.Pointer(&x)) % 8) // == 1
+func BenchmarkAligned(b *testing.B) {
+	type Aligned struct {
+		b [24]byte
+	}
 
-	tmp := (*int64)(unsafe.Pointer(&x))
+	x := Aligned{}
+	address := uintptr(unsafe.Pointer(&x.b))
+	if address%ptrSize != 0 {
+		b.Error("Not aligned address")
+	}
+	tmp := (*int64)(unsafe.Pointer(&x.b))
+	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
-		*tmp = int64(i)
+		*tmp = int64(100)
 	}
 }
