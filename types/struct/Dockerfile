@@ -9,5 +9,5 @@ CMD (perflock -daemon &) && sleep 1 \
   && benchstat old.txt
 
 
-# docker build -t  gobench-structalign . 
+# docker build -t  gobench-structalign .
 # docker run --rm   gobench-structalign

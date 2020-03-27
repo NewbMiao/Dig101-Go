@@ -5,15 +5,17 @@ import (
 	"unsafe"
 )
 
-// docker build -t  gobench-structalign . 
-// docker run --rm   gobench-structalign
 /*
-go test -gcflags='-N -l' github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 3 > old.txt
+perflock go test -gcflags='-N -l' github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 3 > old.txt
 benchstat old.txt
 
 name         time/op
 UnAligned-6  1.87ns ± 5%
 Aligned-6    1.47ns ± 2%
+
+// also can try use docker:
+docker build -t  gobench-structalign https://raw.githubusercontent.com/NewbMiao/Dig101-Go/master/types/struct/Dockerfile
+docker run --rm   gobench-structalign
 */
 var ptrSize uintptr
 
