@@ -5,16 +5,15 @@ import (
 	"unsafe"
 )
 
+// docker build -t  gobench-structalign . 
+// docker run --rm   gobench-structalign
 /*
-go get golang.org/x/perf/cmd/benchstat
-
-GOARCH=386 go test github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 10 > old.txt
-
-// 386_amd64
+go test -gcflags='-N -l' github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 3 > old.txt
 benchstat old.txt
-name          time/op
-UnAligned-12  0.82ns ± 6%
-Aligned-12    0.52ns ± 1%
+
+name         time/op
+UnAligned-6  1.87ns ± 5%
+Aligned-6    1.47ns ± 2%
 */
 var ptrSize uintptr
 
@@ -22,12 +21,13 @@ func init() {
 	ptrSize = unsafe.Sizeof(uintptr(1))
 }
 
+type SType struct {
+	b [32]byte
+}
+
 func BenchmarkUnAligned(b *testing.B) {
-	type UnAligned struct {
-		b [25]byte
-	}
-	x := UnAligned{}
-	address := uintptr(unsafe.Pointer(&x.b))
+	x := SType{}
+	address := uintptr(unsafe.Pointer(&x.b)) + 1
 	if address%ptrSize == 0 {
 		b.Error("Not unaligned address")
 	}
@@ -38,11 +38,7 @@ func BenchmarkUnAligned(b *testing.B) {
 	}
 }
 func BenchmarkAligned(b *testing.B) {
-	type Aligned struct {
-		b [24]byte
-	}
-
-	x := Aligned{}
+	x := SType{}
 	address := uintptr(unsafe.Pointer(&x.b))
 	if address%ptrSize != 0 {
 		b.Error("Not aligned address")
