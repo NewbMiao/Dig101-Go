@@ -4,13 +4,15 @@ package main
 
 // structlayout -json github.com/NewbMiao/Dig101-Go Ag|structlayout-svg -t "align-guarantee" > ag.svg
 type Ag struct {
-	arr [2]int64 // 16
-	sl  []int64  // 24
-	bl  bool     // 1 padding 7
+	arr [2]int8  // 2
+	bl  bool     // 1 padding 5
+	sl  []int16  // 24
 	ptr *int64   // 8
 	st  struct { // 16
 		str string
 	}
+	m map[string]int16
+	i interface{}
 }
 
 // structlayout -json github.com/NewbMiao/Dig101-Go tooMuchPadding|structlayout-optimize -r
@@ -82,6 +84,6 @@ type c6 struct {
 	val2  *int64
 }
 
-func main()  {
-	
+func main() {
+
 }

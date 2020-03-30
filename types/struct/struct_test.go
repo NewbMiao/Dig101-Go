@@ -49,6 +49,6 @@ func BenchmarkAligned(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		*tmp = int64(100)
+		*tmp = int64(i)
 	}
 }
