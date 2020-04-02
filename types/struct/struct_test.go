@@ -33,7 +33,7 @@ func BenchmarkUnAligned(b *testing.B) {
 	if address%ptrSize == 0 {
 		b.Error("Not unaligned address")
 	}
-	tmp := (*int64)(unsafe.Pointer(&x.b))
+	tmp := (*int64)(unsafe.Pointer(address))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		*tmp = int64(i)
@@ -45,7 +45,7 @@ func BenchmarkAligned(b *testing.B) {
 	if address%ptrSize != 0 {
 		b.Error("Not aligned address")
 	}
-	tmp := (*int64)(unsafe.Pointer(&x.b))
+	tmp := (*int64)(unsafe.Pointer(address))
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
