@@ -6,15 +6,18 @@ import (
 )
 
 /*
-perflock go test -gcflags='-N -l' github.com/NewbMiao/Dig101-Go/types/struct -bench . -count 3 > old.txt
+# This benchmark is useless now. Needs figure out a new way to do it.
+
+# No gc,schedule,no optimize(escape and inline)
+GOGC=off GODEBUG=asyncpreemptoff=1 go test -gcflags='-N -l' . -bench . -count 20 > old.txt
 benchstat old.txt
 
 name         time/op
-UnAligned-6  1.87ns ± 5%
-Aligned-6    1.47ns ± 2%
+UnAligned-6  1.82ns ± 0%
+Aligned-6    1.82ns ± 0%
 
-// also can try use docker:
-docker build -t  gobench-structalign https://raw.githubusercontent.com/NewbMiao/Dig101-Go/master/types/struct/Dockerfile
+# also can try use docker:
+docker build -t  gobench-structalign .
 docker run --rm   gobench-structalign
 */
 var ptrSize uintptr
@@ -24,16 +27,21 @@ func init() {
 }
 
 type SType struct {
-	b [32]byte
+	b [64]byte
 }
 
 func BenchmarkUnAligned(b *testing.B) {
 	x := SType{}
-	address := uintptr(unsafe.Pointer(&x.b)) + 1
-	if address%ptrSize == 0 {
-		b.Error("Not unaligned address")
+
+	ptr := unsafe.Pointer(&x.b[9])
+	// equal to: unsafe.Pointer(uintptr(unsafe.Pointer(&x.b))+9)
+	if uintptr(ptr)%ptrSize == 0 {
+		b.Error("Not unaligned uintptr(ptr)")
 	}
-	tmp := (*int64)(unsafe.Pointer(address))
+	// avoid using uintptr -> unsafe.Pointer, the value that uintptr pointed to maybe lost.
+	// tmp := (*int64)(unsafe.Pointer(uintptr(unsafe.Pointer(&x.b)) + 9))
+	tmp := (*int64)(ptr)
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		*tmp = int64(i)
@@ -41,11 +49,12 @@ func BenchmarkUnAligned(b *testing.B) {
 }
 func BenchmarkAligned(b *testing.B) {
 	x := SType{}
-	address := uintptr(unsafe.Pointer(&x.b))
-	if address%ptrSize != 0 {
-		b.Error("Not aligned address")
+	ptr := unsafe.Pointer(&x.b[8])
+	// equal to: unsafe.Pointer(uintptr(unsafe.Pointer(&x.b))+8)
+	if uintptr(ptr)%ptrSize != 0 {
+		b.Error("Not aligned uintptr(ptr)")
 	}
-	tmp := (*int64)(unsafe.Pointer(address))
+	tmp := (*int64)(ptr)
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
