@@ -27,16 +27,18 @@ type AItem [N]byte
 func TestUnalignedAddress(t *testing.T) {
 	x := AItem{}
 	ptr := unsafe.Pointer(&x[9])
+	intPtr := (*int64)(ptr)
 	// equal to: unsafe.Pointer(uintptr(unsafe.Pointer(&x))+9)
-	if uintptr(ptr)%unsafe.Sizeof(uintptr(1)) == 0 {
+	if uintptr(unsafe.Pointer(intPtr))%unsafe.Sizeof(intPtr) == 0 {
 		t.Error("Not unaligned uintptr(ptr)")
 	}
 }
 func TestAlignedAddress(t *testing.T) {
 	x := AItem{}
 	ptr := unsafe.Pointer(&x[8])
+	intPtr := (*int64)(ptr)
 	// equal to: unsafe.Pointer(uintptr(unsafe.Pointer(&x))+8)
-	if uintptr(ptr)%unsafe.Sizeof(uintptr(1)) != 0 {
+	if uintptr(unsafe.Pointer(intPtr))%unsafe.Sizeof(intPtr) != 0 {
 		t.Error("Not unaligned uintptr(ptr)")
 	}
 }
