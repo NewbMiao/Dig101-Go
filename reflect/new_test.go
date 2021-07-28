@@ -8,18 +8,18 @@ import (
 
 func TestSetStructPtrUnExportedStrField(t *testing.T) {
 	var eg testData.Example
+	aVal := "test"
 
-	err := SetStructPtrUnExportedStrField(&eg, "a", "test")
+	err := SetStructPtrUnExportedStrField(&eg, "a", aVal)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if GetStructPtrUnExportedField(&eg, "a").String() != "test" {
+	if GetStructPtrUnExportedField(&eg, "a").String() != aVal {
 		t.Errorf("SetStructPtrUnExportedStrField failed:\t GetStructPtrUnExportedField got %+v", eg)
 	}
-	if fieldVal, _ := GetStructUnExportedField(eg, "a"); fieldVal.String() != "test" {
+	if fieldVal, _ := GetStructUnExportedField(eg, "a"); fieldVal.String() != aVal {
 		t.Errorf("SetStructPtrUnExportedStrField failed:\t GetStructUnExportedField got %+v", eg)
 	}
-
 }
 
 func TestSetStructUnExportedStrField(t *testing.T) {

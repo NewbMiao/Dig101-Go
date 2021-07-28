@@ -10,17 +10,19 @@ import (
 
 type Slice []int
 
-func logSliceHeader(A Slice, symbol string) {
-	sh := (*reflect.SliceHeader)(unsafe.Pointer(&A))
-	log.Printf("%s Data:%d,Len:%d,Cap:%d %v", symbol, sh.Data, sh.Len, sh.Cap, A)
+func logSliceHeader(a Slice, symbol string) {
+	sh := (*reflect.SliceHeader)(unsafe.Pointer(&a))
+	log.Printf("%s Data:%d,Len:%d,Cap:%d %v", symbol, sh.Data, sh.Len, sh.Cap, a)
 }
 
-func (A Slice) Append(value int) {
-	log.Printf("\ntry append %v to A(len:%d), get A1", value, len(A))
-	A1 := append(A, value)
-	logSliceHeader(A, "A")
+func (a Slice) Append(value int) {
+	log.Printf("\ntry append %v to A(len:%d), get A1", value, len(a))
+	// nolint: gocritic // example
+	A1 := append(a, value)
+	logSliceHeader(a, "A")
 	logSliceHeader(A1, "A1")
 }
+
 func appendSliceDiff() {
 	log.Println("Append slice: when cap is not enough, use rescale a new slice, otherwise use a new slice which len is different")
 	mSlice20 := make(Slice, 2, 4)

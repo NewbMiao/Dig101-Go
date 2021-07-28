@@ -2,13 +2,13 @@ package main
 
 /*
 # literal string concat in compile
-$ go tool compile -m  plus.go             
+$ go tool compile -m  plus.go
 plus.go:21:6: can inline plus
 plus.go:23:11: s1 + "yxz" does not escape
 plus.go:24:28: s1 + "y" + s1 + "z" + s1 does not escape
 plus.go:25:33: s1 + "y" + s1 + "z" + s1 + "z" does not escape
 
-# 2-5: concatstring2-concatstring5  
+# 2-5: concatstring2-concatstring5
 #  >5: concatstrings
 $ go tool compile -S  plus.go|grep concat
         0x0068 00104 (plus.go:20)       CALL    runtime.concatstring2(SB)

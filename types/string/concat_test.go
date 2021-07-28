@@ -1,4 +1,4 @@
-package main
+package main_test
 
 import (
 	"bytes"
@@ -7,8 +7,10 @@ import (
 	"testing"
 )
 
-var shortStr = "my_string" + string(make([]byte, 16))
-var longStr = "my_string" + string(make([]byte, 256))
+var (
+	shortStr = "my_string" + string(make([]byte, 16))
+	longStr  = "my_string" + string(make([]byte, 256))
+)
 
 // go test . -bench  BenchmarkConcat -benchtime=3s -benchmem
 
@@ -29,7 +31,7 @@ func BenchmarkConcatLong1000(b *testing.B) {
 	concatIterWithGrowInit(b, longStr, 1000)
 }
 
-// grow init avoid realloc cost
+// grow init avoid realloc cost.
 func concatIterWithGrowInit(b *testing.B, v string, iter int) {
 	b.Run("BufferInit", func(b *testing.B) {
 		var bf bytes.Buffer
@@ -42,7 +44,6 @@ func concatIterWithGrowInit(b *testing.B, v string, iter int) {
 			}
 			_ = bf.String()
 		}
-
 	})
 
 	b.Run("BuilderInit", func(b *testing.B) {
@@ -54,10 +55,10 @@ func concatIterWithGrowInit(b *testing.B, v string, iter int) {
 			}
 			_ = bf.String()
 		}
-
 	})
 }
 
+// nolint: gocognit,cyclop // test
 func concatIter(b *testing.B, v string, iter int) {
 	// implements a Go string concatenation x+y+z+...
 	// is small than 32 would use [32]byte to concat
@@ -70,7 +71,6 @@ func concatIter(b *testing.B, v string, iter int) {
 			}
 			_ = s
 		}
-
 	})
 
 	// initial a []byte buffer which lenth is 64, and grow double when need,
@@ -84,12 +84,10 @@ func concatIter(b *testing.B, v string, iter int) {
 			}
 			_ = bf.String()
 		}
-
 	})
 
 	// inside use strings.Builder
 	b.Run("Join", func(b *testing.B) {
-
 		strsArgs := make([]string, iter)
 		for i := 0; i < iter; i++ {
 			strsArgs[i] = v
@@ -111,7 +109,6 @@ func concatIter(b *testing.B, v string, iter int) {
 			}
 			_ = bf.String()
 		}
-
 	})
 
 	// use simple []byte

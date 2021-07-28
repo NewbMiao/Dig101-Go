@@ -12,11 +12,13 @@ type bigStruct struct {
 
 const loopCnt = 1000
 
+// nolint: gochecknoinits // example
 func init() {
 	discardLog()
 }
+
 func BenchmarkCutSlicePointer(b *testing.B) {
-	var a = make([]T, loopCnt)
+	a := make([]T, loopCnt)
 	for i := 0; i < loopCnt; i++ {
 		a[i] = &bigStruct{id: i}
 	}
@@ -27,32 +29,30 @@ func BenchmarkCutSlicePointer(b *testing.B) {
 }
 
 func BenchmarkCutSlice(b *testing.B) {
-	var a = make([]T, loopCnt)
+	a := make([]T, loopCnt)
 	for i := 0; i < loopCnt; i++ {
 		a[i] = &bigStruct{id: i}
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		cutSlice(a, 1, 800)
-
 	}
 }
 
 func BenchmarkCopy(b *testing.B) {
-	var src = make(Slice, 10240)
+	src := make(Slice, 10240)
 	src[1024] = 1
-	var dst = make(Slice, 10240)
+	dst := make(Slice, 10240)
 	for i := 0; i < b.N; i++ {
 		_ = copy(src[:], src)
 		_ = copy(dst, src)
-
 	}
 }
 
 func BenchmarkCopyByAppend(b *testing.B) {
-	var src = make(Slice, 10240)
+	src := make(Slice, 10240)
 	src[1024] = 1
-	var dst = make(Slice, 10240)
+	dst := make(Slice, 10240)
 
 	for i := 0; i < b.N; i++ {
 		_ = CopyByAppend(src[:], src)

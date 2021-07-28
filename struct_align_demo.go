@@ -2,7 +2,7 @@ package main
 
 // struct for demo
 
-// structlayout -json github.com/NewbMiao/Dig101-Go Ag|structlayout-svg -t "align-guarantee" > ag.svg
+// structlayout -json github.com/NewbMiao/Dig101-Go Ag|structlayout-svg -t "align-guarantee" > ag.svg.
 type Ag struct {
 	arr [2]int8  // 2
 	bl  bool     // 1 padding 5
@@ -15,7 +15,7 @@ type Ag struct {
 	i interface{}
 }
 
-// structlayout -json github.com/NewbMiao/Dig101-Go tooMuchPadding|structlayout-optimize -r
+// structlayout -json github.com/NewbMiao/Dig101-Go tooMuchPadding|structlayout-optimize -r.
 type tooMuchPadding struct {
 	i16 int16
 	i64 int64
@@ -25,7 +25,7 @@ type tooMuchPadding struct {
 	b   bool
 }
 
-// tooMuchPadding optimized
+// tooMuchPadding optimized.
 type optimized struct {
 	i64 int64
 	ptr *string
@@ -36,7 +36,7 @@ type optimized struct {
 }
 
 // 64word align gurrantee on 32-bit arch
-// GOARCH=386 structlayout -json github.com/NewbMiao/Dig101-Go c2 | structlayout-svg -t "int64 first field" > i64_first.svg
+// GOARCH=386 structlayout -json github.com/NewbMiao/Dig101-Go c2 | structlayout-svg -t "int64 first field" > i64_first.svg.
 type c2 struct {
 	val   int64 // pos 0
 	val2  int64 // pos 8
@@ -47,6 +47,7 @@ type T struct {
 	val2 int64
 	_    int16
 }
+
 type c3 struct {
 	val   T
 	valid bool
@@ -85,5 +86,4 @@ type c6 struct {
 }
 
 func main() {
-
 }

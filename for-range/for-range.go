@@ -8,7 +8,7 @@ import (
 
 func main() {}
 
-// will stop cause v is copyed before range
+// will stop cause v is copyed before range.
 func rangeFiniteLoop() {
 	v := []int{1, 2, 3}
 	for i := range v {
@@ -20,6 +20,7 @@ func rangeModify() {
 	arr := [2]int{1, 2}
 	res := []*int{}
 	for _, v := range arr {
+		// nolint: scopelint,exportloopref // test
 		res = append(res, &v)
 	}
 	// expect: 1 2
@@ -40,10 +41,11 @@ func rangeModify() {
 	}
 }
 
-// Use Array Pointers as Arrays
+// Use Array Pointers as Arrays.
 func rangeBigArr() {
 	var arr [102400]int
 	// not reconmend
+
 	for i, n := range arr {
 		_ = i
 		_ = n
@@ -60,7 +62,7 @@ func rangeBigArr() {
 	}
 }
 
-// nil array pointer cant iterate
+// nil array pointer cant iterate.
 func rangeNilPointerArray() {
 	var p *[5]int // nil
 
@@ -79,7 +81,7 @@ func rangeNilPointerArray() {
 
 // go tool compile -S for-range.go |grep memclr
 // also can check go src code: src/cmd/compile/internal/gc/range.go
-// The memclr Optimization
+// The memclr Optimization.
 func rangeResetOptimization() {
 	a := []int{1, 2, 3, 4, 5}
 	// array loop reset has optimize
@@ -87,7 +89,7 @@ func rangeResetOptimization() {
 		a[i] = 0
 	}
 	// slice loop reset has optimize
-	s := a[:]
+	s := a
 	for i := range s {
 		s[i] = 0
 	}
@@ -100,23 +102,23 @@ func rangeResetOptimization() {
 }
 
 func rangeMapWhileCreateElem() {
-	var createElemDuringIterMap = func() {
-		var m = map[int]int{1: 1, 2: 2, 3: 3}
+	createElemDuringIterMap := func() {
+		m := map[int]int{1: 1, 2: 2, 3: 3}
 		for i := range m {
 			m[4] = 4
 			fmt.Printf("%d%d ", i, m[i])
 		}
 	}
 	for i := 0; i < 50; i++ {
-		//some line will not show 44, some line will
+		// some line will not show 44, some line will
 		createElemDuringIterMap()
 		fmt.Println()
 	}
 }
 
 func rangeMapWhileDeleteElem() {
-	var m = map[int]int{1: 1, 2: 2, 3: 3}
-	//only del key once, and not del the current iteration key
+	m := map[int]int{1: 1, 2: 2, 3: 3}
+	// only del key once, and not del the current iteration key
 	var o sync.Once
 	for i := range m {
 		o.Do(func() {
@@ -134,9 +136,10 @@ func rangeMapWhileDeleteElem() {
 
 func rangeGoroutineClosure() {
 	// wrong
-	var m = []int{1, 2, 3}
+	m := []int{1, 2, 3}
 	for i := range m {
 		go func() {
+			// nolint: govet // example
 			fmt.Print(i)
 		}()
 	}

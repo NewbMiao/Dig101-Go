@@ -16,7 +16,7 @@ func main() {
 	// compare is about underlying bytes sequence
 	longStringCmp()
 
-	// concat string avoid copy ( + is recomend way for concat, see concat_test's benchmark)
+	// concat string avoid copy ( + is recommend way for concat, see concat_test's benchmark)
 	concatStringWithCopyUnderlyingBytes()
 
 	// 3way for-range
@@ -24,7 +24,7 @@ func main() {
 }
 
 func longStringCmp() {
-	bs := make([]byte, 1<<26) //64MB
+	bs := make([]byte, 1<<26) // 64MB
 	s0 := string(bs)
 	s1 := string(bs)
 	s2 := s1
@@ -46,12 +46,13 @@ func longStringCmp() {
 	duration = time.Since(startTime)
 	log.Println("duration for (s1 == s2):", duration)
 	log.Println("1ms is 1000000ns! So please try to avoid comparing two long strings if they don't share the same underlying byte sequence.")
-
 }
 
-var s string
-var x = []byte{1023: 'x'}
-var y = []byte{1023: 'y'}
+var (
+	s string
+	x = []byte{1023: 'x'}
+	y = []byte{1023: 'y'}
+)
 
 func fc() {
 	// None of the below 4 conversions will
@@ -112,5 +113,4 @@ func forRangeString() {
 	// for i := 0; i < len(s); i++ {
 	// 	log.Printf("The byte at index %v: 0x%x %v\n", i, s[i], string(s[i]))
 	// }
-
 }

@@ -8,7 +8,7 @@ type Stringer interface {
 	String() string
 }
 
-// declare
+// declare.
 func efaceAndiface() {
 	var a interface{}
 	var b Stringer
@@ -21,35 +21,35 @@ func (i Binary) String() string {
 	return strconv.Itoa(int(i))
 }
 
-// conversion
+// conversion.
 func conversion() {
 	var b Stringer
 	var i Binary = 1
-	b = i //convT64
+	b = i // convT64
 
 	_ = b.String()
 }
 
 // GOSSAFUNC=main go1.14 build types/interface/interface.go
-// to check virtual version of ssa: types/interface/ssa.html
+// to check virtual version of ssa: types/interface/ssa.html.
 func devirt() {
 	var b Stringer = Binary(1)
-	_ = b.String() //static call Binary.String
+	_ = b.String() // static call Binary.String
 }
 
-// typeAssert
+// typeAssert.
 func typeAssert() {
 	var b interface{} = Binary(1)
-	v, ok := b.(Stringer) //getitab
+	v, ok := b.(Stringer) // getitab
 	println(v, ok)
 }
 
 // https://github.com/golang/go/wiki/InterfaceSlice
-//func interfaceSlice() {
+// func interfaceSlice() {
 //	var dataSlice []int
 //	var interfaceSlice []interface{} = dataSlice
 //	_ = indirectiface{}
-//}
+// }
 
 func main() {
 	efaceAndiface()

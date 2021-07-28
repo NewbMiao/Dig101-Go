@@ -1,4 +1,4 @@
-package main
+package main_test
 
 import (
 	"sync/atomic"
@@ -10,7 +10,8 @@ import (
 # This benchmark is useless now. Needs figure out a new way to do it.
 
 # No gc,schedule,no optimize(escape and inline)
-GOGC=off GODEBUG=asyncpreemptoff=1 go test -gcflags='-N -l' . -run none -bench . -count 20 -cpu 1 > b.txt && benchstat b.txt
+GOGC=off GODEBUG=asyncpreemptoff=1
+go test -gcflags='-N -l' . -run none -bench . -count 20 -cpu 1 > b.txt && benchstat b.txt
 
 name       time/op
 UnAligned  3.58ns ± 9%
@@ -18,7 +19,7 @@ Aligned    3.56ns ±11%
 
 # also can try use docker:
 docker build -t  gobench-structalign .
-docker run --rm   gobench-structalign
+docker run --rm   gobench-structalign.
 */
 const N = 256
 
@@ -33,6 +34,7 @@ func TestUnalignedAddress(t *testing.T) {
 		t.Error("Not unaligned uintptr(ptr)")
 	}
 }
+
 func TestAlignedAddress(t *testing.T) {
 	x := AItem{}
 	ptr := unsafe.Pointer(&x[8])
@@ -48,13 +50,14 @@ func BenchmarkUnAligned(b *testing.B) {
 		accessAddr(1)
 	}
 }
+
 func BenchmarkAligned(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		accessAddr(0)
 	}
 }
 
-// access multiple time with aligned or unaligned address
+// access multiple time with aligned or unaligned address.
 func accessAddr(start int) {
 	type VType [8]byte
 	offset := int(unsafe.Alignof(VType{}))

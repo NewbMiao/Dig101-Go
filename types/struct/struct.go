@@ -16,6 +16,7 @@ func main() {
 }
 
 /*
+M
 https://github.com/golang/go/issues/19149
 
 Output will like this, show address is 4bytes aligned, but not consist after mod 8
@@ -23,7 +24,7 @@ $ GOARCH=386 go run main.go
 290566072 0 290566060 4 290566048 0
 
 $ GOARCH=amd64 go run main.go
-824635031404 4 824635031392 0 824635031380 4
+824635031404 4 824635031392 0 824635031380 4.
 
 */
 type M struct {
@@ -42,18 +43,20 @@ func alignedAddress() {
 
 // use max align of struct fields
 // 64-bit arch: 8-byte aligned; 32-bit arch: 4-byte aligned
-// if has gap between fields use padding
+// if has gap between fields use padding.
 func alignPadding() {
 	type T1 struct {
 		a [2]int8
 		b int64
 		c int16
 	}
+
 	type T2 struct {
 		a [2]int8
 		c int16
 		b int64
 	}
+
 	fmt.Printf("arrange fields to reduce size:\n"+
 		"T1 align: %d, size: %d\n"+
 		"T2 align: %d, size: %d\n",
@@ -72,6 +75,7 @@ func zeroField() {
 		// pad bytes avoid memory leak when use address of this final zero field
 		a struct{}
 	}
+
 	a1 := T1{}
 	a2 := T2{}
 	fmt.Printf("zero size struct{} in field:\n"+
@@ -95,11 +99,12 @@ to be 64-bit aligned.
 https://go101.org/article/memory-layout.html#size-and-padding
 https://stackoverflow.com/a/51012703/4431337
 */
-// GOARCH=386 go run types/struct/struct.go
+// GOARCH=386 go run types/struct/struct...............................................go
 func safeAtomicAccess64bitWordOn32bitArch() {
 	fmt.Println("32位系统下可原子安全访问的64位字：")
 
 	var c0 int64
+
 	fmt.Println("64位字本身：",
 		atomic.AddInt64(&c0, 1))
 
@@ -120,12 +125,14 @@ func safeAtomicAccess64bitWordOn32bitArch() {
 		val2 int64
 		_    int16
 	}
+
 	c3 := struct {
 		val   T
 		valid bool
 	}{}
 	fmt.Println("结构体中首字段为嵌套结构体，且其首元素为64位字:",
 		atomic.AddInt64(&c3.val.val2, 1))
+
 	c4 := struct {
 		val   int64 // pos 0
 		valid bool  // pos 8
@@ -135,6 +142,7 @@ func safeAtomicAccess64bitWordOn32bitArch() {
 	}{}
 	fmt.Println("结构体增加填充使对齐的64位字:",
 		atomic.AddInt64(&c4.val2, 1))
+
 	c5 := struct {
 		val   int64
 		valid bool
@@ -148,12 +156,12 @@ func safeAtomicAccess64bitWordOn32bitArch() {
 
 	// 如果换成数组则会panic，
 	// 因为结构体的数组的对齐还是依赖于结构体内字段
-	//c51 := struct {
+	// c51 := struct {
 	//	val   int64
 	//	valid bool
 	//	val2  [3]int64
-	//}{val2: [3]int64{0}}
-	//fmt.Println("结构体中64位字切片:",
+	// }{val2: [3]int64{0}}
+	// fmt.Println("结构体中64位字切片:",
 	//	atomic.AddInt64(&c51.val2[0], 1))
 
 	c6 := struct {
@@ -163,13 +171,14 @@ func safeAtomicAccess64bitWordOn32bitArch() {
 	}{val2: new(int64)}
 	fmt.Println("结构体中64位字指针:",
 		atomic.AddInt64(c6.val2, 1))
-
 }
+
 func shadowField() {
 	type Embedded struct {
 		A string `json:"a"`
 		B string `json:"b"`
 	}
+
 	type Top struct {
 		A interface{} `json:"a"`
 		// 初始化为空结构体
@@ -183,14 +192,13 @@ func shadowField() {
 	a.A = 1
 	// 不同于a.Embedded.A
 
-	var jsonBytes = []byte(`{"a":["1","2"],"b":"3","a1":"4"}`)
+	jsonBytes := []byte(`{"a":["1","2"],"b":"3","a1":"4"}`)
 
 	// 所有 json tag 会被提升用来匹配，遵循同名覆盖规则
 	// 所以 tag "a" 会解码到 a.A
 	json.Unmarshal(jsonBytes, &a)
 	fmt.Printf("unmarshal json with embedded field: %+v\n", a)
 	// {A:[1 2] Embedded:{A: B:3}}
-
 	// 若Embedded.A json tag 为a1， 则输出为
 	// {A:[1 2] Embedded:{A:4 B:3}}
 }
