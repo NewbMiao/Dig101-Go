@@ -28,7 +28,7 @@ func (q *LKQueue) Enqueue(v interface{}) {
 	for {
 		tail := load(&q.tail)
 		next := load(&tail.next)
-		if tail != load(&q.tail) {
+		if tail != load(&q.tail) { // 确保load没改变
 			continue
 		}
 		if next != nil {
@@ -50,7 +50,7 @@ func (q *LKQueue) Dequeue() interface{} {
 		head := load(&q.head)
 		tail := load(&q.tail)
 		next := load(&head.next)
-		if head != load(&q.head) { // head还是那个head
+		if head != load(&q.head) { // 确保load没变
 			continue
 		}
 		if head == tail { // head和tail一样
@@ -66,7 +66,7 @@ func (q *LKQueue) Dequeue() interface{} {
 		v := next.value
 		// 既然要出队了，头指针移动到下一个
 		if cas(&q.head, head, next) {
-			return v // Dequeue is done.  return
+			return v
 		}
 	}
 }
