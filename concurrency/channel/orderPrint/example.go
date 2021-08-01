@@ -78,7 +78,7 @@ func orderPrint3ByWrapper() {
 		}
 	}
 	c := [4]chan int{}
-	for i := range []int{1, 2, 3, 4} {
+	for i := range c {
 		c[i] = make(chan int)
 	}
 	go f(1, c[3], c[0])
@@ -119,14 +119,11 @@ func orderPrint4ByIterator() {
 func orderPrint5ByIterator() {
 	const chanNum int = 4
 	chanArr := make([]chan int, chanNum)
-	for i := 0; i < chanNum; i++ {
-		ch := make(chan int, 1)
-		chanArr[i] = ch
+	for i := range chanArr {
+		chanArr[i] = make(chan int, 1)
 	}
 
-	chanArr[0] <- 1
-	for i := 0; i < chanNum; i++ {
-		nextChanIdx := (i + 1) % chanNum
+	for i := range chanArr {
 		go func(cur, next chan int, idx int) {
 			for {
 				<-cur
@@ -134,8 +131,10 @@ func orderPrint5ByIterator() {
 				fmt.Printf("%d\n", idx+1)
 				next <- 1
 			}
-		}(chanArr[i], chanArr[nextChanIdx], i)
+		}(chanArr[i], chanArr[(i+1)%chanNum], i)
 	}
+	chanArr[0] <- 1
+
 	select {}
 }
 
@@ -145,5 +144,5 @@ func orderPrint1ByJob() {
 }
 
 func main() {
-	orderPrint1ByJob()
+	orderPrint5ByIterator()
 }
