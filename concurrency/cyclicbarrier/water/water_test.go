@@ -23,7 +23,7 @@ func TestWaterFactory(t *testing.T) {
 		ch <- "O"
 	}
 
-	var N = 100
+	N := 100
 	ch = make(chan string, N*3)
 
 	h2o := New()
@@ -62,7 +62,7 @@ func TestWaterFactory(t *testing.T) {
 		t.Fatalf("expect %d atom but got %d", N*3, len(ch))
 	}
 
-	var s = make([]string, 3)
+	s := make([]string, 3)
 	for i := 0; i < N; i++ {
 		s[0] = <-ch
 		s[1] = <-ch
