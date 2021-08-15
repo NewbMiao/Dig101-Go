@@ -98,8 +98,9 @@ to be 64-bit aligned.
 
 https://go101.org/article/memory-layout.html#size-and-padding
 https://stackoverflow.com/a/51012703/4431337
+
+GOARCH=386 go run types/struct/struct.go.
 */
-// GOARCH=386 go run types/struct/struct..go
 func safeAtomicAccess64bitWordOn32bitArch() {
 	fmt.Println("32位系统下可原子安全访问的64位字：")
 
