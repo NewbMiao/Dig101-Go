@@ -7,7 +7,7 @@ import (
 )
 
 // nolint: gocognit // example
-func or(channels ...<-chan interface{}) <-chan interface{} {
+func Or(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有零个或者1个chan
 	switch len(channels) {
 	case 0:
@@ -29,8 +29,8 @@ func or(channels ...<-chan interface{}) <-chan interface{} {
 		default: // 超过两个，二分法递归处理
 			m := len(channels) / 2
 			select {
-			case <-or(channels[:m]...):
-			case <-or(channels[m:]...):
+			case <-Or(channels[:m]...):
+			case <-Or(channels[m:]...):
 			}
 		}
 	}()
@@ -47,7 +47,7 @@ func sig(after time.Duration) <-chan interface{} {
 	return c
 }
 
-func orInReflect(channels ...<-chan interface{}) <-chan interface{} {
+func OrInReflect(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有0个或者1个
 	switch len(channels) {
 	case 0:
@@ -78,7 +78,7 @@ func orInReflect(channels ...<-chan interface{}) <-chan interface{} {
 func main() {
 	start := time.Now()
 
-	<-or(
+	<-Or(
 		sig(1*time.Second),
 		sig(2*time.Second),
 		sig(3*time.Second),
@@ -89,7 +89,7 @@ func main() {
 
 	start = time.Now()
 
-	<-orInReflect(
+	<-OrInReflect(
 		sig(1*time.Second),
 		sig(2*time.Second),
 		sig(3*time.Second),
