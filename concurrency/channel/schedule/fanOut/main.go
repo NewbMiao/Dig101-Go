@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// nolint: gocognit // example
 func fanOut(ch <-chan interface{}, out []chan interface{}, async bool) {
 	go func() {
 		defer func() { // 退出时关闭所有的输出chan
@@ -31,27 +30,29 @@ func fanOut(ch <-chan interface{}, out []chan interface{}, async bool) {
 	}()
 }
 
-func fanOutInReflect(ch <-chan interface{}, out []chan interface{}, async bool) {
+func fanOutReflect(ch <-chan interface{}, out []chan interface{}) {
 	go func() {
 		defer func() { // 退出时关闭所有的输出chan
 			for i := range out {
 				close(out[i])
 			}
 		}()
+		cases := make([]reflect.SelectCase, len(out))
 		// 构造SelectCase slice
-		cases := []reflect.SelectCase{
-			{
-				Dir:  reflect.SelectRecv,
-				Chan: reflect.ValueOf(ch),
-			},
+		for i := range cases {
+			cases[i].Dir = reflect.SelectSend
 		}
-		// 循环，从cases中选择一个可用的
-		_, v, ok := reflect.Select(cases)
-		if !ok { // 此channel已经close
-			return
-		}
-		for i := range out {
-			out[i] <- v.Interface()
+		for v := range ch {
+			v := v
+			for i := range cases {
+				cases[i].Chan = reflect.ValueOf(out[i])
+				cases[i].Send = reflect.ValueOf(v)
+			}
+			for range cases {
+				chosen, _, _ := reflect.Select(cases)
+				// 已发送过，用nil阻塞，避免再次发送
+				cases[chosen].Chan = reflect.ValueOf(nil)
+			}
 		}
 	}()
 }
@@ -66,7 +67,7 @@ func main() {
 		ch <- 1
 	}()
 	time.Sleep(time.Millisecond)
-	fanOutInReflect(ch, out, true)
+	fanOutReflect(ch, out)
 	for i := range out {
 		fmt.Println("got: ", <-out[i])
 	}

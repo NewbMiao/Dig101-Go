@@ -6,6 +6,6 @@
 
 - [博客版](http://blog.newbmiao.com/categories/go/dig101/)
 
-- [微信版](https://mp.weixin.qq.com/mp/homepage?__biz=MzUxNzA2NzEzNw==&hid=3&sn=6ded611e164ec49132752fdbdaac552f)
+- [微信版](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzUxNzA2NzEzNw==&action=getalbum&album_id=1345369054160306177)
 
 Digging...

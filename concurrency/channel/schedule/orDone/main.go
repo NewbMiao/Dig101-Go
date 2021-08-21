@@ -6,7 +6,6 @@ import (
 	"time"
 )
 
-// nolint: gocognit // example
 func Or(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有零个或者1个chan
 	switch len(channels) {

@@ -8,7 +8,7 @@ import (
 
 var num = 500
 
-func BenchmarkOr(b *testing.B) {
+func BenchmarkFanInRecur(b *testing.B) {
 	done := make(chan struct{})
 	defer close(done)
 	streams := make([]<-chan interface{}, num)
@@ -17,11 +17,11 @@ func BenchmarkOr(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		<-Or(streams...)
+		<-fanInRecur(streams...)
 	}
 }
 
-func BenchmarkOrInReflect(b *testing.B) {
+func BenchmarkFanInReflect(b *testing.B) {
 	done := make(chan struct{})
 	defer close(done)
 	streams := make([]<-chan interface{}, num)
@@ -30,6 +30,6 @@ func BenchmarkOrInReflect(b *testing.B) {
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		<-OrInReflect(streams...)
+		<-fanInReflect(streams...)
 	}
 }

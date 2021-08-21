@@ -49,7 +49,6 @@ func fanInRecur(chans ...<-chan interface{}) <-chan interface{} {
 	}
 }
 
-// nolint: gocognit //example
 func mergeTwo(a, b <-chan interface{}) <-chan interface{} {
 	c := make(chan interface{})
 	go func() {
