@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/NewbMiao/Dig101-Go/concurrency/channel/schedule/generator"
+)
 
 func mapChan(in <-chan interface{}, fn func(interface{}) interface{}) <-chan interface{} {
 	out := make(chan interface{}) // 创建一个输出chan
@@ -32,25 +36,8 @@ func reduce(in <-chan interface{}, fn func(r, v interface{}) interface{}) interf
 	return out
 }
 
-// 生成一个数据流.
-func asStream(done <-chan struct{}) <-chan interface{} {
-	s := make(chan interface{})
-	values := []int{1, 2, 3, 4, 5}
-	go func() {
-		defer close(s)
-		for _, v := range values { // 从数组生成
-			select {
-			case <-done:
-				return
-			case s <- v:
-			}
-		}
-	}()
-	return s
-}
-
 func main() {
-	in := asStream(nil)
+	in := generator.AsStream(nil, []interface{}{1, 2, 3, 4, 5}...)
 
 	// map操作: 乘以10
 	mapFn := func(v interface{}) interface{} {

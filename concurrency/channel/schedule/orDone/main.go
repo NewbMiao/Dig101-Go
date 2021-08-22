@@ -3,10 +3,27 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"sync"
 	"time"
 )
 
-func Or(channels ...<-chan interface{}) <-chan interface{} {
+func Or(chans ...<-chan interface{}) <-chan interface{} {
+	out := make(chan interface{})
+	go func() {
+		var once sync.Once
+		for _, c := range chans {
+			go func(c <-chan interface{}) {
+				select {
+				case <-c:
+					once.Do(func() { close(out) })
+				case <-out:
+				}
+			}(c)
+		}
+	}()
+	return out
+}
+func OrRecur(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有零个或者1个chan
 	switch len(channels) {
 	case 0:
@@ -28,8 +45,8 @@ func Or(channels ...<-chan interface{}) <-chan interface{} {
 		default: // 超过两个，二分法递归处理
 			m := len(channels) / 2
 			select {
-			case <-Or(channels[:m]...):
-			case <-Or(channels[m:]...):
+			case <-OrRecur(channels[:m]...):
+			case <-OrRecur(channels[m:]...):
 			}
 		}
 	}()
@@ -77,7 +94,7 @@ func OrInReflect(channels ...<-chan interface{}) <-chan interface{} {
 func main() {
 	start := time.Now()
 
-	<-Or(
+	<-OrRecur(
 		sig(1*time.Second),
 		sig(2*time.Second),
 		sig(3*time.Second),
