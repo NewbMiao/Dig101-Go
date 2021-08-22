@@ -11,8 +11,9 @@ var funcs = []struct {
 	name string
 	f    func(...<-chan interface{}) <-chan interface{}
 }{
-	{"reflection", OrInReflect},
-	{"recursion", OrRecur},
+	{"reflection", OrReflection},
+	{"recursion", OrRecur},        // 二分递归
+	{"recursion2", OrRecurSimple}, // 普通递归
 	{"goroutine", Or},
 }
 
@@ -25,9 +26,7 @@ func TestOr(t *testing.T) {
 			for i := range streams {
 				streams[i] = generator.AsStream(done, []interface{}{1})
 			}
-			c := f.f(streams...)
-
-			<-c
+			<-f.f(streams...)
 		})
 	}
 }
