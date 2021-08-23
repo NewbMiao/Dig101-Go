@@ -1,8 +1,46 @@
 package main
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"runtime"
+	"sync"
+
+	"github.com/NewbMiao/Dig101-Go/concurrency/channel/schedule/generator"
+)
 
 func main() {
+	fmt.Println("任务进行中，当前协程数:", runtime.NumGoroutine())
+	done := make(chan struct{})
+	defer close(done)
+	streams := make([]<-chan interface{}, 100)
+	for i := range streams {
+		streams[i] = generator.AsStream(done, []int{1, 2, 3})
+	}
+	ch := fanIn(streams...)
+	for range ch {
+	}
+	fmt.Println("任务结束，当前协程数:", runtime.NumGoroutine())
+}
+
+func fanIn(chans ...<-chan interface{}) <-chan interface{} {
+	out := make(chan interface{})
+
+	go func() {
+		var wg sync.WaitGroup
+		wg.Add(len(chans))
+		for _, ch := range chans {
+			go func(ch <-chan interface{}) {
+				for v := range ch {
+					out <- v
+				}
+				wg.Done()
+			}(ch)
+		}
+		wg.Wait()
+		close(out)
+	}()
+	return out
 }
 
 func fanInReflect(chans ...<-chan interface{}) <-chan interface{} {

@@ -58,7 +58,7 @@ func concatIterWithGrowInit(b *testing.B, v string, iter int) {
 	})
 }
 
-// nolint: gocognit,cyclop // test
+// nolint: gocognit // test
 func concatIter(b *testing.B, v string, iter int) {
 	// implements a Go string concatenation x+y+z+...
 	// is small than 32 would use [32]byte to concat

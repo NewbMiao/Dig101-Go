@@ -32,7 +32,7 @@ func TestOr(t *testing.T) {
 }
 
 // see https://docs.google.com/spreadsheets/d/11lVkxeSC8dRcTNxi4FubI-_Hls-4btCD13NAubXiFIY/edit?usp=sharin
-func BenchmarkOrDone(b *testing.B) {
+func BenchmarkOr(b *testing.B) {
 	for _, f := range funcs {
 		for n := 8; n <= 1024; n *= 2 {
 			b.Run(fmt.Sprintf("%s/%d", f.name, n), func(b *testing.B) {

@@ -24,6 +24,7 @@ func Or(chans ...<-chan interface{}) <-chan interface{} {
 	}()
 	return out
 }
+
 func OrWithIssue(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有零个或者1个chan
 	switch len(channels) {
@@ -43,7 +44,7 @@ func OrWithIssue(channels ...<-chan interface{}) <-chan interface{} {
 			case <-channels[0]:
 			case <-channels[1]:
 			}
-		default: //超过两个，二分法递归处理
+		default: // 超过两个，二分法递归处理
 			/*
 				3个时有无限递归的问题:
 				    f(3)
@@ -64,7 +65,6 @@ func OrWithIssue(channels ...<-chan interface{}) <-chan interface{} {
 }
 
 func OrRecurSimple(channels ...<-chan interface{}) <-chan interface{} {
-
 	switch len(channels) {
 	case 0:
 		return nil
@@ -93,6 +93,7 @@ func OrRecurSimple(channels ...<-chan interface{}) <-chan interface{} {
 	}()
 	return orDone
 }
+
 func OrRecur(channels ...<-chan interface{}) <-chan interface{} {
 	// 特殊情况，只有零个或者1个chan
 	switch len(channels) {
