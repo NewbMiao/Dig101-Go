@@ -49,3 +49,17 @@ func AsStream(done <-chan struct{}, values ...interface{}) <-chan interface{} {
 	}()
 	return s
 }
+
+func GenerateChanStream(num int) <-chan <-chan interface{} {
+	chanStream := make(chan (<-chan interface{}))
+	go func() {
+		defer close(chanStream)
+		for i := 0; i < num; i++ {
+			stream := make(chan interface{}, 1)
+			stream <- i
+			close(stream)
+			chanStream <- stream
+		}
+	}()
+	return chanStream
+}

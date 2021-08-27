@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"runtime"
+
+	"github.com/NewbMiao/Dig101-Go/concurrency/channel/schedule/generator"
 )
 
 // https://github.com/kat-co/concurrency-in-go-src/blob/4e55fd7f3f5b9c5efc45a841702393a1485ba206/concurrency-patterns-in-go/the-bridge-channel/fig-bridge-channel.go
-var bridge = func(
-	done <-chan interface{},
+func Bridge(
+	done <-chan struct{},
 	chanStream <-chan <-chan interface{},
 ) <-chan interface{} {
 	valStream := make(chan interface{})
@@ -23,7 +26,7 @@ var bridge = func(
 			case <-done:
 				return
 			}
-			for val := range stream {
+			for val := range generator.OrDone(done, stream) {
 				select {
 				case valStream <- val:
 				case <-done:
@@ -34,24 +37,15 @@ var bridge = func(
 	return valStream
 }
 
-var genVals = func() <-chan <-chan interface{} {
-	chanStream := make(chan (<-chan interface{}))
-	go func() {
-		defer close(chanStream)
-		for i := 0; i < 10; i++ {
-			stream := make(chan interface{}, 1)
-			stream <- i
-			close(stream)
-			chanStream <- stream
-		}
-	}()
-	return chanStream
-}
-
 func main() {
-	done := make(chan interface{})
+	fmt.Println("任务进行中，当前协程数:", runtime.NumGoroutine())
+
+	done := make(chan struct{})
 	defer close(done)
-	for v := range bridge(done, genVals()) {
+	streams := generator.GenerateChanStream(10)
+	for v := range Bridge(done, streams) {
 		fmt.Printf("%v ", v)
 	}
+
+	fmt.Println("\n任务结束，当前协程数:", runtime.NumGoroutine())
 }
