@@ -3,7 +3,7 @@ module github.com/NewbMiao/Dig101-Go
 go 1.16
 
 require (
-	github.com/go-kratos/kratos v1.0.0
+	github.com/go-kratos/kratos v1.0.1
 	github.com/go-pkgz/syncs v1.1.1
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/marusama/cyclicbarrier v1.1.0
