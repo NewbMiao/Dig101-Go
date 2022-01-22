@@ -468,6 +468,7 @@ linters:
     - goerr113
     - unparam
     - testpackage
+    - varnamelen
   # presets:
   #   - bugs
   #   - unused

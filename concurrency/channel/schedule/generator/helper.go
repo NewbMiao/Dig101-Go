@@ -55,6 +55,7 @@ func GenerateChanStream(num int) <-chan <-chan interface{} {
 	go func() {
 		defer close(chanStream)
 		for i := 0; i < num; i++ {
+			// use buffer chan avoid blocking
 			stream := make(chan interface{}, 1)
 			stream <- i
 			close(stream)

@@ -12,7 +12,6 @@ func TestBridge(t *testing.T) {
 	defer close(done)
 	streams := generator.GenerateChanStream(10)
 	for range Bridge(done, streams) {
-
 	}
 }
 
@@ -26,7 +25,6 @@ func BenchmarkBridge(b *testing.B) {
 				streams := generator.GenerateChanStream(i)
 				b.StartTimer()
 				for range Bridge(done, streams) {
-
 				}
 			}
 		})
