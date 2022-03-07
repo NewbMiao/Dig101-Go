@@ -86,6 +86,8 @@ github.com/go-logfmt/logfmt v0.5.0/go.mod h1:wCYkCAKZfumFQihp8CzCvQ3paCTfi41vtzG
 github.com/go-ole/go-ole v1.2.4/go.mod h1:XCwSNxSkXRo4vlyPy93sltvi/qJq0jqQhjqQNIwKuxM=
 github.com/go-pkgz/syncs v1.1.1 h1:jWN+y6FS/Xe+8z4l3QMbSnODGyaxDHGojIS+wyKIjxg=
 github.com/go-pkgz/syncs v1.1.1/go.mod h1:bt9lxWRRJ9vOCMGc8Big8ttjYHLKP88ofj1y38UlaHE=
+github.com/go-pkgz/syncs v1.2.0 h1:aiizQFILlMZ4KtRNaYLcDffRbUQZH9fclsgr5KybWyY=
+github.com/go-pkgz/syncs v1.2.0/go.mod h1:fjThZdM2FkC/oSeiqBTOZOtHpbrCh4HuHbipB5qZJJM=
 github.com/go-playground/assert/v2 v2.0.1/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
 github.com/go-playground/locales v0.12.1/go.mod h1:IUMDtCfWo/w/mtMfIE/IG2K+Ey3ygWanZIBtBW0W2TM=
 github.com/go-playground/locales v0.13.0/go.mod h1:taPMhCMXrRLJO55olJkUXHZBHCxTMfnGwq/HNwmWNS8=
