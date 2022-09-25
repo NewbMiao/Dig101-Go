@@ -1,6 +1,6 @@
 module github.com/NewbMiao/Dig101-Go
 
-go 1.16
+go 1.19
 
 require (
 	github.com/go-kratos/kratos v1.0.1
