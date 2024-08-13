@@ -1,5 +1,5 @@
 
-FROM golang:1.17-alpine
+FROM golang:1.23-alpine
 RUN apk update && apk add --update git 
 RUN go get -u golang.org/x/perf/cmd/benchstat 
 RUN go get -u github.com/NewbMiao/Dig101-Go
